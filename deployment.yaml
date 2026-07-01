@@ -23,4 +23,4 @@ spec:
         - name: DISTRIBUTION
           value: "k3s"
         - name: STAGE
-          value: "single-node"
+          value: "multinode"
