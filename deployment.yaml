@@ -21,6 +21,6 @@ spec:
         - containerPort: 3000
         env:
         - name: DISTRIBUTION
-          value: "k3s"
+          value: "RKE2"
         - name: STAGE
-          value: "HA"
+          value: "single-node"
