@@ -46,3 +46,12 @@ by Prometheus node-exporter.
 - All 5 node exporters running and collecting metrics
 - Grafana dashboards showing cluster resource usage
 - Node memory metrics collected via Prometheus on all 5 nodes
+
+### k3s HA
+- Prometheus successfully deployed and collecting metrics from all 5 nodes
+- Node exporter running on all 5 nodes
+- Grafana some dashboards showed "No data" due to k3s running control plane 
+  components differently from kubeadm
+- Node memory metrics successfully collected via Prometheus queries
+- CPU utilisation: 4.50%
+- Memory utilisation: 40.9%
