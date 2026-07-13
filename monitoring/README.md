@@ -40,3 +40,9 @@ kubectl get secret monitoring-grafana -n monitoring -o jsonpath="{.data.admin-pa
 k3s runs control plane components differently from kubeadm so some Grafana 
 dashboards show "No data". Node-level metrics are still collected correctly 
 by Prometheus node-exporter.
+
+### RKE2 HA
+- Prometheus and Grafana successfully deployed
+- All 5 node exporters running and collecting metrics
+- Grafana dashboards showing cluster resource usage
+- Node memory metrics collected via Prometheus on all 5 nodes
