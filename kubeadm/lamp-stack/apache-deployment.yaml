@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-php
+  labels:
+    app: apache-php
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: apache-php
+  template:
+    metadata:
+      labels:
+        app: apache-php
+    spec:
+      containers:
+      - name: apache-php
+        image: php:8.1-apache
+        command: ["/bin/bash", "-c"]
+        args:
+        - |
+          docker-php-ext-install mysqli && apache2-foreground
+        ports:
+        - containerPort: 80
+        env:
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_DATABASE
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: MYSQL_PASSWORD
+        volumeMounts:
+        - name: php-app
+          mountPath: /var/www/html
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "125m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+      volumes:
+      - name: php-app
+        configMap:
+          name: php-app-config

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-app-config
+data:
+  index.php: |
+    <?php
+    $host = 'mysql-service';
+    $dbname = getenv('MYSQL_DATABASE');
+    $user = getenv('MYSQL_USER');
+    $pass = getenv('MYSQL_PASSWORD');
+
+    $conn = new mysqli($host, $user, $pass, $dbname);
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head><title>LAMP on Kubernetes</title></head>
+    <body>
+        <h1>LAMP Stack on Kubernetes!</h1>
+        <h2>Distribution: kubeadm HA</h2>
+        <p>MySQL Status: Connected Successfully!</p>
+        <p>Database: <?php echo $dbname; ?></p>
+        <p>Server Time: <?php echo date('Y-m-d H:i:s'); ?></p>
+    </body>
+    </html>
