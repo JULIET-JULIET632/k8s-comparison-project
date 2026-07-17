@@ -14,13 +14,38 @@ spec:
       labels:
         app: apache-php
     spec:
+      initContainers:
+      - name: copy-php-files
+        image: busybox
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          cat > /var/www/html/index.php << 'PHPEOF'
+          <?php
+          $host = "mysql-service";
+          $dbname = getenv("MYSQL_DATABASE");
+          $user = getenv("MYSQL_USER");
+          $pass = getenv("MYSQL_PASSWORD");
+          $conn = new mysqli($host, $user, $pass, $dbname);
+          if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+          }
+          echo "<h1>LAMP Stack on Kubernetes!</h1>";
+          echo "<h2>Distribution: kubeadm HA</h2>";
+          echo "<p>MySQL Status: Connected!</p>";
+          echo "<p>Database: " . $dbname . "</p>";
+          echo "<p>Time: " . date("Y-m-d H:i:s") . "</p>";
+          ?>
+          PHPEOF
+        volumeMounts:
+        - name: php-files
+          mountPath: /var/www/html
       containers:
       - name: apache-php
         image: php:8.1-apache
         command: ["/bin/bash", "-c"]
         args:
-        - |
-          docker-php-ext-install mysqli && apache2-foreground
+        - "docker-php-ext-install mysqli && apache2-foreground"
         ports:
         - containerPort: 80
         env:
@@ -40,7 +65,7 @@ spec:
               name: mysql-secret
               key: MYSQL_PASSWORD
         volumeMounts:
-        - name: php-app
+        - name: php-files
           mountPath: /var/www/html
         resources:
           requests:
@@ -50,6 +75,6 @@ spec:
             memory: "256Mi"
             cpu: "250m"
       volumes:
-      - name: php-app
-        configMap:
-          name: php-app-config
+      - name: php-files
+        persistentVolumeClaim:
+          claimName: php-files-pvc
